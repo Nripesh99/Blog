@@ -111,15 +111,21 @@ session_start();
         <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button> -->
-            <ul class="navbar-nav">
-
-                <li class="nav-item">
-                    <a class="nav-link" href="http://localhost:8000/View/index.php">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="http://localhost:8000/View/blog/blog2.php">Blog</a>
-                </li>
-            </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="http://localhost:8000/View/index.php">Home</a>
+            </li>
+            <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Blog
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="http://localhost:8000/View/blog/blog2.php">View Blog</a>
+                    <a class="dropdown-item" href="http://localhost:8000/View/blog/index.php">Add Blog</a>
+                    <!-- <a class="dropdown-item" href="http://localhost:8000/View/blog/editblog.php">Edit Blog</a> -->
+                </div>
+            </li>
+        </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="nav-item">
                 <?php if (empty($_SESSION['user_id'])): ?>

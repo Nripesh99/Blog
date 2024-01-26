@@ -24,10 +24,37 @@ $row = $database->select('blog', 'blog_id', $blog_id);
 
         <div class="form-group">
             <label for="content">Content:</label>
-            <textarea class="form-control" id="content" name="content" rows="8"><?php echo $row['content'] ?></textarea>
+            <div id="content">
+                <?=$row['content']?>
+            </div>
+            <!-- <textarea class="form-control" id="content" name="content" rows="8"><?php echo $row['content'] ?></textarea> -->
+            <input type="text" name="content" id="hiddenContent" hidden >
+
         </div>
 
         <button type="submit" class="btn btn-primary" id="submit">Edit Blog</button>
     </form>
 </div>
+<script>
+// import { Image, ImageResizeEditing, ImageResizeHandles } from '@ckeditor/ckeditor5-image';
+            // Create CKEditor instance
+            ClassicEditor
+                .create(document.querySelector('#content'), {
+                    // plugins: [ 'Image', 'ImageResizeEditing', 'ImageResizeHandles' ],
+                    ckfinder: {
+                        uploadUrl: '..//Controller/BlogController.php?page=addImage'
+                    }
+                })
+                .then(editor => {
+                    console.log(editor);
+
+                    // Set the value of the hidden input when the content changes
+                    editor.model.document.on('change:data', () => {
+                        document.getElementById('hiddenContent').value = editor.getData();
+                    });
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+    </script>
 <?= include '../layout/footer.php' ?>

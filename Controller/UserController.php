@@ -10,7 +10,7 @@ class UserController{
         if(isset($_GET['page'])){
             if($_GET['page'] === 'viewUser'){
 
-                $this->viewUser($id);
+                $this->viewUser($_GET['id']);
             }
         }
     }

@@ -1,4 +1,4 @@
-<?= include '../layout/header.php' ?>
+<?php include '../layout/header.php' ?>
 <?php
 if (isset($_SESSION['toastr'])) {
     $toastr = $_SESSION['toastr'];
@@ -60,7 +60,7 @@ $rows2 = $blog->recommendBlog();
     a {}
 </style>
 <div class="container">
-    <h2 class='text-center'>Blog</h2>
+    <h2 class='text-center mt-2'>Blog</h2>
     <div class="row">
         <?php foreach ($rowsNew as $row) { ?>
             <div class="col-md-4 mb-4">
