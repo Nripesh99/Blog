@@ -199,6 +199,9 @@ if (isset($_SESSION['user_id'])) {
                             </div>
                             <?php endif;?>
                         <?php endforeach; ?>
+                        <div class="text-center">
+                            <button class="btn btn-primary" id=#seeMore>See more</button>
+                        </div>
 
                     </div>
 
@@ -232,5 +235,23 @@ if (isset($_SESSION['user_id'])) {
 </div>
 
 </div>
+<script>
+$(document).ready(function(){
+    $("#seemore").click(function(){
+        $.ajax({
+            type: "get", // Change the type to POST
+            url: "../../Controller/CommentController.php?page=addCommentJ",
+            data: { blog_id: <?=$blog_id?> },
+            success: function(data){
+                var json_data = JSON.parse(data);
+                console.log(json_data);
+            },
+            // error: function(xhr, status, error) {
+            //     console.error("Error:", error);
+            // }
+        });
+    });
+});
+
 
 <?php include '../layout/footer.php' ?>

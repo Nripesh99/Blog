@@ -13,6 +13,9 @@ class CommentController
                 $this->viewComment($_GET['blog_id']);
             }elseif($_GET['page'] === 'addCommentReply'){
                 $this->addCommentReply();
+            }elseif($_GET['page']=== 'addCommentJ'){
+                $this->addCommentJ($_GET['blog_id']);
+
             }
         }
     }
@@ -88,6 +91,16 @@ class CommentController
         $result=$database->viewonLimit('comment',$condition);
         return $result;
 
+    }
+    function addCommentJ($blog_id){
+        $database=new Database();
+        $blogId=$_GET['$blog_id'];
+        $condition = 'WHERE blog_id = ' . $blogId ;
+        $result=$database->viewonLimit('comment',$condition);
+        header('Content-Type: application/json');
+
+    // Return a JSON-encoded response
+    echo json_encode($result);
     }
 
 }
