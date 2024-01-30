@@ -43,9 +43,8 @@ class BlogController
 
     public function addBlog()
     {
-        session_start();
+        session_start(); 
         global $database; // Declare $database as a global variable
-
         $database = new Database;
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $date = date("Y-m-d h:i:sa");

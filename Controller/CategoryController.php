@@ -63,17 +63,17 @@ function viewCategory(){
     $database = new Database;
     $result = $database->view('category');
 
-    if ($result) {
-        $_SESSION['toastr'] = array(
-            'type'      => 'success',
-            'message'   => 'Data Retrieved Successfully!',
-        );
-    } else {
-        $_SESSION['toastr'] = array(
-            'type'      => 'error',
-            'message'   => 'Error in retrieving data!',
-        );
-    }
+    // if ($result) {
+    //     $_SESSION['toastr'] = array(
+    //         'type'      => 'success',
+    //         'message'   => 'Data Retrieved Successfully!',
+    //     );
+    // } else {
+    //     $_SESSION['toastr'] = array(
+    //         'type'      => 'error',
+    //         'message'   => 'Error in retrieving data!',
+    //     );
+    // }
 
     return $result;
 }

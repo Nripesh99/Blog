@@ -1,4 +1,16 @@
-<?= include '../layout/header.php' ?>
+<!--Edit -->
+<?php
+ ob_start();
+ include '../layout/header.php';
+ if(empty($_SESSION['user_id'])){
+     $_SESSION['toastr'] = array(
+         'type' => 'error', // or 'success' or 'info' or 'warning'
+     'message' => 'Login To edit blog',
+     );
+     header("Location:../login.php");
+     die();
+ }
+?>
 <?php
 include '../../Model/database.php';
 $database = new Database;

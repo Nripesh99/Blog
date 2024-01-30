@@ -104,7 +104,6 @@
 <?php
 session_start();
 ?>
-
 <body class="pt-5">
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
         <div class="container-fluid">

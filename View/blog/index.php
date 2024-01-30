@@ -1,11 +1,18 @@
-<?php include '../layout/header.php';
-if (isset($_SESSION['toastr'])) {
-    $toastr = $_SESSION['toastr'];
-    echo "<script>toastrFunction('{$_SESSION['toastr']['type']}', '{$_SESSION['toastr']['message']}');</script>";
-    unset($_SESSION['toastr']);
+<!--Add  blog -->
 
+<?php
+// @session_start();
+ob_start();
+include '../layout/header.php';
+if(empty($_SESSION['user_id'])){
+    $_SESSION['toastr'] = array(
+        'type' => 'error', // or 'success' or 'info' or 'warning'
+    'message' => 'Login To add blog',
+    );
+    header("Location:../login.php");
+    die();
 }
-?>
+ ?>
 <?php
 include '../../Controller/BlogController.php';
 include '../../Controller/CategoryController.php';
@@ -14,42 +21,44 @@ $row = $category->viewCategory();
 ?>
 <div class="container mt-5">
     <h1 class="text-center">Add Blog</h1>
-    <form class="border p-4 rounded shadow" action="../../Controller/BlogController.php?page=addBlog" method="post"
-        enctype="multipart/form-data">
+    <form class="border p-4 rounded shadow" action="../../Controller/BlogController.php?page=addBlog" method="post" enctype="multipart/form-data">
         <label for="category">Category</label>
-<select name="category" class="form-control" id="category">
-    <option value="">Select Category</option>
-    <?php foreach ($row as $rows): ?>
-        <?php if (empty($rows['category_parent_id'])): ?>
-            <option class="form-control" value="<?= $rows['category_id']; ?>"><?= $rows['category_name']; ?></option>
-        <?php endif; ?>
-    <?php endforeach; ?>
-</select>
+        <select name="category" class="form-control" id="category">
+            <option value="">Select Category</option>
+            <?php foreach ($row as $rows): ?>
+                <?php if (empty($rows['category_parent_id'])): ?>
+                    <option class="form-control" value="<?= $rows['category_id']; ?>"><?= $rows['category_name']; ?></option>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </select>
 
-<label for="subCategory">Sub Category</label>
-<select name="subCategory" class="form-control" id="subCategory">
-    <option value="">Select Sub Category</option>
-    <?php foreach ($row as $rows): ?>
-        <?php if (!empty($rows['category_parent_id'])): ?>
-            <option class="form-control" value="<?= $rows['category_id']; ?>" 
-                    data-parent-id="<?= $rows['category_parent_id']; ?>"
-                    class="subCategoryOption" style="display: none;">
-                <?= $rows['category_name']; ?>
-            </option>
-        <?php endif; ?>
-    <?php endforeach; ?>
-</select>
-<script>
- $(document).ready(function () {
-    $('#category').change(function () {
-        var selectedCategoryId = $(this).val();
-        $('.subCategoryOption').hide(); // Hide all subcategory options
-        $('.subCategoryOption[data-parent-id="' + selectedCategoryId + '"]').show(); // Show only relevant subcategory options
-    });
-});
+        <label for="subCategory">Sub Category</label>
+        <select name="subCategory" class="form-control" id="subCategory">
+            <option value="">Select Sub Category</option>
+            <?php foreach ($row as $rows): ?>
+                <?php if (!empty($rows['category_parent_id'])): ?>
+                    <option class="form-control subCategoryOption" value="<?= $rows['category_id']; ?>" 
+                            data-parent-id="<?= $rows['category_parent_id']; ?>"
+                            style="display: none;">
+                        <?= $rows['category_name']; ?>
+                    </option>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </select>
 
-</script>
+        <script>
+            $(document).ready(function () {
+                $('.subCategoryOption').hide();
 
+                $('#category').change(function () {
+                    var selectedCategoryId = $(this).val();
+                    // Hide all subcategory options
+                    $('.subCategoryOption').hide();
+                    // Show only relevant subcategory options
+                    $('.subCategoryOption[data-parent-id="' + selectedCategoryId + '"]').show();
+                });
+            });
+        </script>
 
         <div class="form-group">
             <label for="title">Title:</label>
@@ -62,39 +71,34 @@ $row = $category->viewCategory();
         </div>
 
         <div class="form-group">
-    <label for="content" >Content:</label>
-    <div id="content"></div>
-    <input type="text" name="content" id="hiddenContent" hidden >
-
-</div>
+            <label for="content">Content:</label>
+            <div id="content"></div>
+            <input type="text" name="content" id="hiddenContent" hidden>
+        </div>
 
         <div class="text-center p-4">
-
-            <button type="submit" class="btn btn-primary" id="submit">AddBlog</button>
+            <button type="submit" class="btn btn-primary" id="submit">Add Blog</button>
         </div>
     </form>
 </div>
-<script>
-// import { Image, ImageResizeEditing, ImageResizeHandles } from '@ckeditor/ckeditor5-image';
-            // Create CKEditor instance
-            ClassicEditor
-                .create(document.querySelector('#content'), {
-                    // plugins: [ 'Image', 'ImageResizeEditing', 'ImageResizeHandles' ],
-                    ckfinder: {
-                        uploadUrl: '../../Controller/BlogController.php?page=addImage'
-                    }
-                })
-                .then(editor => {
-                    console.log(editor);
 
-                    // Set the value of the hidden input when the content changes
-                    editor.model.document.on('change:data', () => {
-                        document.getElementById('hiddenContent').value = editor.getData();
-                    });
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-    </script>
+<script src="https://cdn.ckeditor.com/ckeditor5/40.0.1/classic/ckeditor.js"></script>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#content'), {
+            ckfinder: {
+                uploadUrl: '../../Controller/BlogController.php?page=addImage'
+            }
+        })
+        .then(editor => {
+            console.log(editor);
+            editor.model.document.on('change:data', () => {
+                document.getElementById('hiddenContent').value = editor.getData();
+            });
+        })
+        .catch(error => {
+            console.error(error);
+        });
+</script>
 
 

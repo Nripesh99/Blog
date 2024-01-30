@@ -62,4 +62,4 @@ include 'layout/header.php';
     }
 </script>
 
-<?= include 'layout/footer.php'; ?>
+<?php include 'layout/footer.php'; ?>
