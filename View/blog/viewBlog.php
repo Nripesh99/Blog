@@ -107,6 +107,8 @@ if (isset($_SESSION['user_id'])) {
             replyForm.style.display = 'none';
         }
     }
+
+    
 </script>
 <div class="container mt-5 ">
     <div class="row justify-content-center">
