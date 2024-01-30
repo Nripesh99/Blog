@@ -94,13 +94,13 @@ class CommentController
     }
     function addCommentJ($blog_id){
         $database=new Database();
-        $blogId=$_GET['$blog_id'];
-        $condition = 'WHERE blog_id = ' . $blogId ;
+        $condition = 'WHERE blog_id = ' . $blog_id;
         $result=$database->viewonLimit('comment',$condition);
-        header('Content-Type: application/json');
+
 
     // Return a JSON-encoded response
     echo json_encode($result);
+    die();
     }
 
 }
