@@ -15,7 +15,6 @@ class CommentController
                 $this->addCommentReply();
             }elseif($_GET['page']=== 'addCommentJ'){
                 $this->addCommentJ($_GET['blog_id']);
-
             }
         }
     }
@@ -92,15 +91,45 @@ class CommentController
         return $result;
 
     }
-    function addCommentJ($blog_id){
+    function viewCommentReplyN($blog_id, $comment_id){
         $database=new Database();
-        $condition = 'WHERE blog_id = ' . $blog_id;
+        $condition = 'WHERE blog_id = ' . $blog_id . ' AND parent_comment_id = ' . $comment_id . ' ORDER BY comment_id DESC LIMIT 1';
         $result=$database->viewonLimit('comment',$condition);
+        return $result;
 
+    }
+    function viewCommentN($blog_id){
+        $database=new Database();
+        $condition = 'WHERE blog_id = ' . $blog_id . ' AND parent_comment_id IS NULL  ';
+        $result=$database->viewonLimit('comment',$condition);
+        return $result;
+    }
+    function addCommentJ($blog_id){
+        $result = $this->viewCommentN($blog_id);
+        $result2 = array();
+    
+        foreach($result as $mainComment){
+            // Each main comment might have multiple replies
+            $replies = $this->viewCommentReplyN($blog_id, $mainComment['comment_id']);
+    
+            // Append replies to the result2 array
+            $result2[$mainComment['comment_id']] = $replies;
+        }
+    
+        // Combine both results into a response array
+        $response = array(
+            'result' => $result,
+            'result2' => $result2
+        );
+    
+        // Return a JSON-encoded response
+        echo json_encode($response);
+        die();
+    }
+    
+    
+    function commentDom(){
 
-    // Return a JSON-encoded response
-    echo json_encode($result);
-    die();
     }
 
 }

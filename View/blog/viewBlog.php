@@ -140,72 +140,76 @@ if (isset($_SESSION['user_id'])) {
                     <h4 class="px-3">Comments</h4>
 
                     <!-- Example Comment -->
-                    <div class="comment px-3">
-                        <?php foreach ($row4 as $rows3): ?>
-                            <div class="text-end">
-                                <small>
-                                    <strong class="text-muted">
-                                        <?= isset($rows3['commenter_name']) ? $rows3['commenter_name'] : ''; ?>
-                                    </strong>
-                                    <small class="text-muted">
-                                        on
-                                        <?= $rows3['comment_timestamp']; ?>
-                                    </small>
-                                </small>
-                            </div>
-                            <div class="border rounded px-2">
-                                <p>
-                                    <?= isset($rows3['comment_text']) ? $rows3['comment_text'] : ''; ?>
-                                </p>
-                            </div>
-                            <?php $row6 = $commentController->viewCommentReply($row['blog_id'], $rows3['comment_id']); ?>
-                            <div class="w-75 p-3 ms-auto ">
+                    <div id="commentsContainer">
 
-                                <?php foreach ($row6 as $rows6): ?>
-                                    <div class="text-end">
-                                        <small>
-                                            <strong class="text-muted">
-                                                <?= isset($rows6['commenter_name']) ? $rows6['commenter_name'] : ''; ?>
-                                            </strong>
-                                            <small class="text-muted">
-                                                on
-                                                <?= $rows6['comment_timestamp']; ?>
-                                            </small>
+
+                        <div class="comment px-3">
+                            <?php foreach ($row4 as $rows3): ?>
+                                <div class="text-end">
+                                    <small>
+                                        <strong class="text-muted">
+                                            <?= isset($rows3['commenter_name']) ? $rows3['commenter_name'] : ''; ?>
+                                        </strong>
+                                        <small class="text-muted">
+                                            on
+                                            <?= $rows3['comment_timestamp']; ?>
                                         </small>
-                                    </div>
-                                    <div class="border rounded px-2">
-                                        <p>
-                                            <?= isset($rows6['comment_text']) ? $rows6['comment_text'] : ''; ?>
-                                        </p>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-
-                            <form action="../../Controller/CommentController.php?page=addCommentReply"
-                                class="form-group reply-form" method="post" id="replyForm_<?= $rows3['comment_id'] ?>">
-                                <input type="text" name="parent_comment_id" value="<?= $rows3['comment_id'] ?>" hidden>
-                                <input type="text" name="blog_id" value="<?= $row['blog_id'] ?>" hidden>
-                                <input type="text" name="commenter_name" value="<?= $row3['name'] ?>" hidden>
-                                <label for="comment" class="form-label">Your Comment:</label>
-                                <input type="text" class="form-control" name="comment_text" required>
-                                <input type="submit" class="btn btn-primary">
-                            </form>
-                            <?php
-                            if (isset($_SESSION['user_id'])):
-                                ?>
-                                <div id="hideform_<?= $rows3['comment_id'] ?>">
-                                    <div onclick="showForm('<?= $rows3['comment_id'] ?>')" class="btn btn-primary reply-btn">
-                                        <i class="bi bi-reply"></i>
-                                    </div>
+                                    </small>
                                 </div>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                        <div class="text-center">
-                            <button class="btn btn-primary" id=#seeMore>See more</button>
+                                <div class="border rounded px-2">
+                                    <p>
+                                        <?= isset($rows3['comment_text']) ? $rows3['comment_text'] : ''; ?>
+                                    </p>
+                                </div>
+                                <?php $row6 = $commentController->viewCommentReply($row['blog_id'], $rows3['comment_id']); ?>
+                                <div class="w-75 p-3 ms-auto ">
+                                    <?php foreach ($row6 as $rows6): ?>
+                                        <div class="text-end">
+                                            <small>
+                                                <strong class="text-muted">
+                                                    <?= isset($rows6['commenter_name']) ? $rows6['commenter_name'] : ''; ?>
+                                                </strong>
+                                                <small class="text-muted">
+                                                    on
+                                                    <?= $rows6['comment_timestamp']; ?>
+                                                </small>
+                                            </small>
+                                        </div>
+                                        <div class="border rounded px-2">
+                                            <p>
+                                                <?= isset($rows6['comment_text']) ? $rows6['comment_text'] : ''; ?>
+                                            </p>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+
+                                <form action="../../Controller/CommentController.php?page=addCommentReply"
+                                    class="form-group reply-form" method="post" id="replyForm_<?= $rows3['comment_id'] ?>">
+                                    <input type="text" name="parent_comment_id" value="<?= $rows3['comment_id'] ?>" hidden>
+                                    <input type="text" name="blog_id" value="<?= $row['blog_id'] ?>" hidden>
+                                    <input type="text" name="commenter_name" value="<?= $row3['name'] ?>" hidden>
+                                    <label for="comment" class="form-label">Your Comment:</label>
+                                    <input type="text" class="form-control" name="comment_text" required>
+                                    <input type="submit" class="btn btn-primary">
+                                </form>
+                                <?php
+                                if (isset($_SESSION['user_id'])):
+                                    ?>
+                                    <div id="hideform_<?= $rows3['comment_id'] ?>">
+                                        <div onclick="showForm('<?= $rows3['comment_id'] ?>')"
+                                            class="btn btn-primary reply-btn">
+                                            <i class="bi bi-reply"></i>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
                         </div>
-
+                        
                     </div>
-
+                    
+                    <div class="text-center">
+                        <button class="btn btn-primary" id="seeMore">See more</button>
+                    </div>
                 </div>
                 <!-- Comment Form -->
                 <div class="comment-form px-3">
@@ -238,20 +242,77 @@ if (isset($_SESSION['user_id'])) {
 </div>
 <script>
     $(document).ready(function () {
-        $("#seemore").click(function () {
+        // Initial load of comments
+        // loadComments();
+        // Attach click event to the "See more" button
+        $('#seeMore').click(function () {
+            loadComments();
+        });
+
+        function loadComments() {
+            // Make an AJAX request to fetch more comments
             $.ajax({
-                type: "get", // Change the type to POST
-                url: "../../Controller/CommentController.php?page=addCommentJ",
-                data: { blog_id: <?= $blog_id ?> },
-                success: function (data) {
-                    var json_data = JSON.parse(data);
-                    console.log(json_data);
+                url: '../../Controller/CommentController.php',
+                type: 'GET',
+                data: { page: 'addCommentJ', blog_id: <?php echo $row['blog_id']; ?> },
+                success: function (response) {
+                    var $responseArray = JSON.parse(response);
+                    var comment = $responseArray['result'];
+                    var replies = $responseArray['result2'];
+
+                    console.log(comment);
+                    console.log(replies);
+                    for (let i = 0; i < comment.length; i++) {
+
+                        let commentHTML = `
+                        <div class="comment px-3">
+                            <div class="text-end">
+                                <small>
+                                    <strong class="text-muted">${comment[i].commenter_name}</strong>
+                                    <small class="text-muted">on ${comment[i].comment_timestamp}</small>
+                                </small>
+                            </div>
+                            <div class="border rounded px-2">
+                                <p>${comment[i].comment_text}</p>
+                            </div>
+                        `;
+                        let replyHTML = '';
+                        // Check if there are replies for this comment
+                        if (replies[comment[i].comment_id] && replies[comment[i].comment_id].length > 0) {
+                            for (let j = 0; j < replies[comment[i].comment_id].length; j++) {
+                                replyHTML = `
+                                <div class="w-75 p-3 ms-auto ">
+                                    <div class="text-end">
+                                        <small>
+                                            <strong class="">${replies[comment[i].comment_id][j].commenter_name}</strong>
+                                            <small class="text-muted">on ${replies[comment[i].comment_id][j].comment_timestamp}</small>
+                                        </small>
+                                    </div>
+                                    <div class="border rounded px-2">
+                                        <p>${replies[comment[i].comment_id][j].comment_text}</p>
+                                    </div>
+                                `;
+
+                            
+                            }
+                        }
+
+                        // Append the comment HTML to the commentContainer
+
+                        console.log("comment html", commentHTML);
+                        console.log("reply html", replyHTML);
+
+                        $('#commentsContainer').append(commentHTML);
+                        $('#commentContainer').append(replyHTML);
+
+                    }
+
                 },
-                error: function(xhr, status, error) {
-                    console.error("Error:", error);
+                error: function (error) {
+                    console.error('Error loading more comment:', error);
                 }
             });
-        });
+        }
     });
 </script>
 
