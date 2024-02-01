@@ -93,14 +93,16 @@ class CommentController
     }
     function viewCommentReplyN($blog_id, $comment_id){
         $database=new Database();
-        $condition = 'WHERE blog_id = ' . $blog_id . ' AND parent_comment_id = ' . $comment_id . ' ORDER BY comment_id DESC LIMIT 1';
+        $condition = 'WHERE blog_id = ' . $blog_id . ' AND parent_comment_id = ' . $comment_id . ' ORDER BY comment_id DESC ';
         $result=$database->viewonLimit('comment',$condition);
         return $result;
 
     }
     function viewCommentN($blog_id){
         $database=new Database();
-        $condition = 'WHERE blog_id = ' . $blog_id . ' AND parent_comment_id IS NULL  ';
+        $offset=3;
+        $limit=100;
+        $condition = 'WHERE blog_id = ' . $blog_id . ' AND parent_comment_id IS NULL LIMIT ' . $limit . ' OFFSET ' . $offset;
         $result=$database->viewonLimit('comment',$condition);
         return $result;
     }
@@ -114,12 +116,14 @@ class CommentController
     
             // Append replies to the result2 array
             $result2[$mainComment['comment_id']] = $replies;
+            $blogid=$blog_id;
         }
     
         // Combine both results into a response array
         $response = array(
             'result' => $result,
-            'result2' => $result2
+            'result2' => $result2,
+            'blog_id' => $blogid
         );
     
         // Return a JSON-encoded response

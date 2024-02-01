@@ -92,6 +92,7 @@ if (isset($_SESSION['user_id'])) {
 </style>
 <script>
     function showForm(commentId) {
+        console.log(commentId)
         // Implement showForm function to display the corresponding reply form
         var replyForm = document.getElementById('replyForm_' + commentId);
         var hideForm = document.getElementById('hideform_' + commentId);
@@ -140,10 +141,10 @@ if (isset($_SESSION['user_id'])) {
                     <h4 class="px-3">Comments</h4>
 
                     <!-- Example Comment -->
-                    <div id="commentsContainer">
+                    <!-- <div id="commentsContainer"> -->
 
 
-                        <div class="comment px-3">
+                        <div class="comment px-3" id="commentsContainer">
                             <?php foreach ($row4 as $rows3): ?>
                                 <div class="text-end">
                                     <small>
@@ -162,7 +163,7 @@ if (isset($_SESSION['user_id'])) {
                                     </p>
                                 </div>
                                 <?php $row6 = $commentController->viewCommentReply($row['blog_id'], $rows3['comment_id']); ?>
-                                <div class="w-75 p-3 ms-auto ">
+                                <div class="w-75 p-3 ms-auto " id='repliesContainer'>
                                     <?php foreach ($row6 as $rows6): ?>
                                         <div class="text-end">
                                             <small>
@@ -182,16 +183,19 @@ if (isset($_SESSION['user_id'])) {
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
-
-                                <form action="../../Controller/CommentController.php?page=addCommentReply"
-                                    class="form-group reply-form" method="post" id="replyForm_<?= $rows3['comment_id'] ?>">
-                                    <input type="text" name="parent_comment_id" value="<?= $rows3['comment_id'] ?>" hidden>
-                                    <input type="text" name="blog_id" value="<?= $row['blog_id'] ?>" hidden>
-                                    <input type="text" name="commenter_name" value="<?= $row3['name'] ?>" hidden>
-                                    <label for="comment" class="form-label">Your Comment:</label>
-                                    <input type="text" class="form-control" name="comment_text" required>
-                                    <input type="submit" class="btn btn-primary">
-                                </form>
+                                <div id="combineContainer">
+                                    <form action="../../Controller/CommentController.php?page=addCommentReply"
+                                        class="form-group reply-form" method="post"
+                                        id="replyForm_<?= $rows3['comment_id'] ?>">
+                                        <input type="text" name="parent_comment_id" value="<?= $rows3['comment_id'] ?>"
+                                            hidden>
+                                        <input type="text" name="blog_id" value="<?= $row['blog_id'] ?>" hidden>
+                                        <input type="text" name="commenter_name" value="<?= $row3['name'] ?>" hidden>
+                                        <label for="comment" class="form-label">Your Comment:</label>
+                                        <input type="text" class="form-control" name="comment_text" required>
+                                        <input type="submit" class="btn btn-primary">
+                                    </form>
+                                </div>
                                 <?php
                                 if (isset($_SESSION['user_id'])):
                                     ?>
@@ -204,9 +208,9 @@ if (isset($_SESSION['user_id'])) {
                                 <?php endif; ?>
                             <?php endforeach; ?>
                         </div>
-                        
-                    </div>
-                    
+
+                    <!-- </div> -->
+
                     <div class="text-center">
                         <button class="btn btn-primary" id="seeMore">See more</button>
                     </div>
@@ -247,6 +251,7 @@ if (isset($_SESSION['user_id'])) {
         // Attach click event to the "See more" button
         $('#seeMore').click(function () {
             loadComments();
+            $('#seeMore').hide();;
         });
 
         function loadComments() {
@@ -259,57 +264,79 @@ if (isset($_SESSION['user_id'])) {
                     var $responseArray = JSON.parse(response);
                     var comment = $responseArray['result'];
                     var replies = $responseArray['result2'];
+                    var blog_id = <?php echo json_encode($_GET['blog_id']); ?>;
 
-                    console.log(comment);
-                    console.log(replies);
+                    // Initialize an empty string to store the combined HTML
+                    let combinedHtml = '';
+
                     for (let i = 0; i < comment.length; i++) {
 
                         let commentHTML = `
-                        <div class="comment px-3">
-                            <div class="text-end">
-                                <small>
-                                    <strong class="text-muted">${comment[i].commenter_name}</strong>
-                                    <small class="text-muted">on ${comment[i].comment_timestamp}</small>
-                                </small>
-                            </div>
-                            <div class="border rounded px-2">
-                                <p>${comment[i].comment_text}</p>
-                            </div>
-                        `;
+                        <div class="text-end">
+                            <small>
+                                <strong class="text-muted">${comment[i].commenter_name}</strong>
+                                <small class="text-muted">on ${comment[i].comment_timestamp}</small>
+                            </small>
+                        </div>
+                        <div class="border rounded px-2">
+                            <p>${comment[i].comment_text}</p>
+                        </div>
+                `;
+
                         let replyHTML = '';
+                        let combineHtml = '';
+
                         // Check if there are replies for this comment
                         if (replies[comment[i].comment_id] && replies[comment[i].comment_id].length > 0) {
                             for (let j = 0; j < replies[comment[i].comment_id].length; j++) {
-                                replyHTML = `
-                                <div class="w-75 p-3 ms-auto ">
-                                    <div class="text-end">
-                                        <small>
-                                            <strong class="">${replies[comment[i].comment_id][j].commenter_name}</strong>
-                                            <small class="text-muted">on ${replies[comment[i].comment_id][j].comment_timestamp}</small>
-                                        </small>
-                                    </div>
-                                    <div class="border rounded px-2">
-                                        <p>${replies[comment[i].comment_id][j].comment_text}</p>
-                                    </div>
-                                `;
-
-                            
+                                replyHTML += `
+                            <div class="w-75 p-3 ms-auto">
+                                <div class="text-end">
+                                    <small>
+                                        <strong class="">${replies[comment[i].comment_id][j].commenter_name}</strong>
+                                        <small class="text-muted">on ${replies[comment[i].comment_id][j].comment_timestamp}</small>
+                                    </small>
+                                </div>
+                                <div class="border rounded px-2">
+                                    <p>${replies[comment[i].comment_id][j].comment_text}</p>
+                                </div>
+                            </div>
+                        `;
                             }
                         }
 
-                        // Append the comment HTML to the commentContainer
+                        combineHtml = `
+                    <form action="../../Controller/CommentController.php?page=addCommentReply" class="form-group reply-form" method="post" id="replyForm_${comment[i].comment_id}">
+                        <input type="text" name="parent_comment_id" value="${comment[i].comment_id}" hidden>
+                        <input type="text" name="blog_id" value="<?= $row['blog_id'] ?>" hidden>
+                        <input type="text" name="commenter_name" value="<?= $row3['name'] ?>" hidden>
+                        <label for="comment" class="form-label">Your Comment:</label>
+                        <input type="text" class="form-control" name="comment_text" required>
+                        <input type="submit" class="btn btn-primary">
+                    </form>
+                    <div id="hideform_${comment[i].comment_id}">
+                                        <div onclick="showForm('${comment[i].comment_id}')"
+                                            class="btn btn-primary reply-btn">
+                                            <i class="bi bi-reply"></i>
+                                        </div>
+                                    </div>
 
-                        console.log("comment html", commentHTML);
-                        console.log("reply html", replyHTML);
+                `;
 
-                        $('#commentsContainer').append(commentHTML);
-                        $('#commentContainer').append(replyHTML);
-
+                        // Concatenate the HTML strings for comment, replyHtml, and combineHtml
+                        combinedHtml += commentHTML + replyHTML + combineHtml;
+                        console.log(combinedHtml);
                     }
 
+                    // Append the combined HTML to the commentsContainer
+                    $('#commentsContainer').append(combinedHtml);
+
+
+
                 },
+                // Handle error if any
                 error: function (error) {
-                    console.error('Error loading more comment:', error);
+                    console.log("Error fetching comments: ", error);
                 }
             });
         }
